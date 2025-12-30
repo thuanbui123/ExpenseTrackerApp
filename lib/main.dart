@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -54,18 +55,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _selectedIndex = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  static const List<Widget> _pages = [
+    Center(child: Text('Trang chủ')),
+    Center(child: Text('Thống kê')),
+    Center(child: Text("Cài đặt")),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -77,45 +73,147 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        // leading: Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: CircleAvatar(
+        //     backgroundColor: Colors.purple[100],
+        //     backgroundImage: NetworkImage('https://wp-cms-media.s3.ap-east-1.amazonaws.com/lay_anh_dai_dien_facebook_dep_1_2967d609e0.jpg'),
+        //   ),
+        // ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text('Xin chào,', style: TextStyle(color: Colors.grey, fontSize: 14)),
+            Text('Thuân Bùi', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+          ],
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications_none, color: Colors.black,)
+          ),
+          IconButton(
+            icon: const Icon(Icons.search, color: Colors.black),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            Icon(
+              Icons.account_balance_wallet_outlined,
+              size: 100,
+              color: Colors.grey[300],
             ),
+            const SizedBox(height: 20,),
+            const Text(
+              'Chưa có giao dịch nào',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500
+              ),
+            ),
+            const SizedBox(height: 10,),
+            const Text(
+              'Hãy nhấn nút + để thêm chi tiêu đầu tiên!',
+              style: TextStyle(color: Colors.grey),
+            )
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        selectedItemColor: Colors.greenAccent[700], // Màu khi được chọn
+        unselectedItemColor: Colors.grey,            // Màu khi không chọn
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Trang chủ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: 'Thống kê',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Cài đặt',
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Container(
+              height: 100,
+              child: DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: Colors.greenAccent,
+                ),
+                child: Row(
+                  children: [
+                    const CircleAvatar(
+                      radius: 30, 
+                      backgroundColor: Colors.white,
+                      backgroundImage: NetworkImage(
+                          'https://wp-cms-media.s3.ap-east-1.amazonaws.com/lay_anh_dai_dien_facebook_dep_1_2967d609e0.jpg'),
+                    ),
+                    const SizedBox(width: 15), 
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'Thuân Bùi',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'thuan.bui@email.com',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Trang chủ'),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.history),
+              title: const Text('Lịch sử giao dịch'),
+              onTap: () => Navigator.pop(context),
+            )
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        onPressed: () {
+          print("Mở màn hình thêm giao dịch");
+        },
+        tooltip: 'Thêm giao dịch',
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add, size: 30,),
       ),
     );
   }
