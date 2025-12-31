@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -57,42 +57,60 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _pages = [
-    Center(child: Text('Trang chủ')),
-    Center(child: Text('Thống kê')),
-    Center(child: Text("Cài đặt")),
-  ];
+  static const List<Widget> _pages = [Center(child: Text('Trang chủ')), Center(child: Text('Thống kê')), Center(child: Text("Cài đặt"))];
+
+  void showAddTaskModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom, top: 20, left: 20, right: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Thêm chi tiêu mới', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 15),
+              const TextField(decoration: InputDecoration(labelText: "Tên khoản chi tiêu.(Ví dụ: Ăn sáng) ")),
+              const TextField(
+                decoration: InputDecoration(labelText: 'Số tiền (VNĐ)'),
+                keyboardType: TextInputType.number, // Hiện bàn phím số
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx), // Đóng modal
+                child: const Text('Thêm giao dịch'),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        // leading: Padding(
-        //   padding: const EdgeInsets.all(8.0),
-        //   child: CircleAvatar(
-        //     backgroundColor: Colors.purple[100],
-        //     backgroundImage: NetworkImage('https://wp-cms-media.s3.ap-east-1.amazonaws.com/lay_anh_dai_dien_facebook_dep_1_2967d609e0.jpg'),
-        //   ),
-        // ),
+
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
             Text('Xin chào,', style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text('Thuân Bùi', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+            Text(
+              'Thuân Bùi',
+              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+            ),
           ],
         ),
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.notifications_none, color: Colors.black,)
+            icon: const Icon(Icons.notifications_none, color: Colors.black),
           ),
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
@@ -104,25 +122,14 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.account_balance_wallet_outlined,
-              size: 100,
-              color: Colors.grey[300],
-            ),
-            const SizedBox(height: 20,),
+            Icon(Icons.account_balance_wallet_outlined, size: 100, color: Colors.grey[300]),
+            const SizedBox(height: 20),
             const Text(
               'Chưa có giao dịch nào',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500
-              ),
+              style: TextStyle(fontSize: 18, color: Colors.grey, fontWeight: FontWeight.w500),
             ),
-            const SizedBox(height: 10,),
-            const Text(
-              'Hãy nhấn nút + để thêm chi tiêu đầu tiên!',
-              style: TextStyle(color: Colors.grey),
-            )
+            const SizedBox(height: 10),
+            const Text('Hãy nhấn nút + để thêm chi tiêu đầu tiên!', style: TextStyle(color: Colors.grey)),
           ],
         ),
       ),
@@ -134,86 +141,52 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
         selectedItemColor: Colors.greenAccent[700], // Màu khi được chọn
-        unselectedItemColor: Colors.grey,            // Màu khi không chọn
+        unselectedItemColor: Colors.grey, // Màu khi không chọn
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Trang chủ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Thống kê',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Cài đặt',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Trang chủ'),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Thống kê'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Cài đặt'),
         ],
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            Container(
+            SizedBox(
               height: 100,
               child: DrawerHeader(
-                decoration: const BoxDecoration(
-                  color: Colors.greenAccent,
-                ),
+                decoration: const BoxDecoration(color: Colors.greenAccent),
                 child: Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 30, 
-                      backgroundColor: Colors.white,
-                      backgroundImage: NetworkImage(
-                          'https://wp-cms-media.s3.ap-east-1.amazonaws.com/lay_anh_dai_dien_facebook_dep_1_2967d609e0.jpg'),
-                    ),
-                    const SizedBox(width: 15), 
+                    const CircleAvatar(radius: 30, backgroundColor: Colors.white, backgroundImage: NetworkImage('https://wp-cms-media.s3.ap-east-1.amazonaws.com/lay_anh_dai_dien_facebook_dep_1_2967d609e0.jpg')),
+                    const SizedBox(width: 15),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
                         Text(
                           'Thuân Bùi',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.white,
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
                         ),
-                        Text(
-                          'thuan.bui@email.com',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                          ),
-                        ),
+                        Text('thuan.bui@email.com', style: TextStyle(color: Colors.white70, fontSize: 14)),
                       ],
                     ),
                   ],
                 ),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Trang chủ'),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.history),
-              title: const Text('Lịch sử giao dịch'),
-              onTap: () => Navigator.pop(context),
-            )
+            ListTile(leading: const Icon(Icons.home), title: const Text('Trang chủ'), onTap: () => Navigator.pop(context)),
+            ListTile(leading: const Icon(Icons.history), title: const Text('Lịch sử giao dịch'), onTap: () => Navigator.pop(context)),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print("Mở màn hình thêm giao dịch");
+          showAddTaskModal(context);
         },
         tooltip: 'Thêm giao dịch',
         backgroundColor: Colors.blue,
-        child: const Icon(Icons.add, size: 30,),
+        child: const Icon(Icons.add, size: 30),
       ),
     );
   }
