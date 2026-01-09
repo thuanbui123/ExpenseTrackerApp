@@ -1,3 +1,4 @@
+import 'package:expense_tracker_app/models/transaction.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,24 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -38,15 +22,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -56,6 +31,34 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
+
+  List<Transaction> transactions = [];
+
+  final _titleController = TextEditingController();
+  final _amountController = TextEditingController();
+
+  void addTransaction(String title, double amount) {
+    final newTx = Transaction(title: title, amount: amount, date: DateTime.now());
+    setState(() {
+      transactions.add(newTx);
+    });
+  }
+
+  void _submitData() {
+    final enteredTitle = _titleController.text;
+    final enteredAmount = double.tryParse(_amountController.text) ?? 0;
+
+    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+      return;
+    }
+
+    addTransaction(enteredTitle, enteredAmount);
+
+    Navigator.of(context).pop();
+
+    _titleController.clear();
+    _amountController.clear();
+  }
 
   static const List<Widget> _pages = [Center(child: Text('Trang chủ')), Center(child: Text('Thống kê')), Center(child: Text("Cài đặt"))];
 
@@ -72,16 +75,17 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               const Text('Thêm chi tiêu mới', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 15),
-              const TextField(decoration: InputDecoration(labelText: "Tên khoản chi tiêu.(Ví dụ: Ăn sáng) ")),
-              const TextField(
+              TextField(
+                decoration: InputDecoration(labelText: "Tên khoản chi tiêu.(Ví dụ: Ăn sáng)titleController "),
+                controller: _titleController,
+              ),
+              TextField(
                 decoration: InputDecoration(labelText: 'Số tiền (VNĐ)'),
+                controller: _amountController,
                 keyboardType: TextInputType.number, // Hiện bàn phím số
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(ctx), // Đóng modal
-                child: const Text('Thêm giao dịch'),
-              ),
+              ElevatedButton(onPressed: _submitData, child: const Text('Lưu giao dịch')),
               const SizedBox(height: 20),
             ],
           ),
@@ -118,21 +122,43 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.account_balance_wallet_outlined, size: 100, color: Colors.grey[300]),
-            const SizedBox(height: 20),
-            const Text(
-              'Chưa có giao dịch nào',
-              style: TextStyle(fontSize: 18, color: Colors.grey, fontWeight: FontWeight.w500),
+      body: transactions.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.account_balance_wallet_outlined, size: 100, color: Colors.grey[300]),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Chưa có giao dịch nào',
+                    style: TextStyle(fontSize: 18, color: Colors.grey, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text('Hãy nhấn nút + để thêm chi tiêu đầu tiên!', style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+            )
+          : ListView.builder(
+              itemCount: transactions.length,
+              itemBuilder: (ctx, index) {
+                return Card(
+                  elevation: 3,
+                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.greenAccent,
+                      child: const Icon(Icons.attach_money, color: Colors.white),
+                    ),
+                    title: Text(transactions[index].title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(transactions[index].date.toString()),
+                    trailing: Text(
+                      '${transactions[index].amount}đ',
+                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                );
+              },
             ),
-            const SizedBox(height: 10),
-            const Text('Hãy nhấn nút + để thêm chi tiêu đầu tiên!', style: TextStyle(color: Colors.grey)),
-          ],
-        ),
-      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
@@ -153,23 +179,25 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.zero,
           children: [
             SizedBox(
-              height: 100,
+              height: 120,
               child: DrawerHeader(
                 decoration: const BoxDecoration(color: Colors.greenAccent),
                 child: Row(
                   children: [
                     const CircleAvatar(radius: 30, backgroundColor: Colors.white, backgroundImage: NetworkImage('https://wp-cms-media.s3.ap-east-1.amazonaws.com/lay_anh_dai_dien_facebook_dep_1_2967d609e0.jpg')),
                     const SizedBox(width: 15),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          'Thuân Bùi',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
-                        ),
-                        Text('thuan.bui@email.com', style: TextStyle(color: Colors.white70, fontSize: 14)),
-                      ],
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            'Thuân Bùi',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
+                          ),
+                          Text('thuan.bui@email.com', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                        ],
+                      ),
                     ),
                   ],
                 ),
