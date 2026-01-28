@@ -8,9 +8,15 @@ import '../models/transaction.dart';
 class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   TransactionBloc() : super(TransactionState(transactions: [])) {
     on<LoadTransactions>((event, emit) async {
-      final dataList = await DBHelper.getData(DBHelper.tableName);
-      final txs = dataList.map((item) => Transaction(id: item['id'], title: item['title'], amount: item['amount'], date: DateTime.parse(item['date']))).toList();
-      emit(TransactionState(transactions: txs));
+      emit(TransactionState(transactions: state.transactions, isLoading: true));
+      try {
+        // await Future.delayed(const Duration(milliseconds: 500));
+        final dataList = await DBHelper.getData(DBHelper.tableName);
+        final txs = dataList.map((item) => Transaction(id: item['id'], title: item['title'], amount: item['amount'], date: DateTime.parse(item['date']))).toList();
+        emit(TransactionState(transactions: txs, isLoading: false));
+      } catch (e) {
+        emit(TransactionState(transactions: state.transactions, isLoading: false));
+      }
     });
 
     on<AddTransaction>((event, emit) async {

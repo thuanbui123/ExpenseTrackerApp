@@ -17,7 +17,9 @@ class TransactionList extends StatelessWidget {
     return BlocBuilder<TransactionBloc, TransactionState>(
       builder: (context, state) {
         final txs = state.transactions;
-
+        if (state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
         return txs.isEmpty
             ? const Center(child: Text('Chưa có giao dịch nào được thêm!', style: TextStyle(fontSize: 16)))
             : ListView.builder(
