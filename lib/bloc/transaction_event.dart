@@ -20,3 +20,5 @@ class DeleteTransaction extends TransactionEvent {
 
   DeleteTransaction({required this.id});
 }
+
+class LoadTransactions extends TransactionEvent {}

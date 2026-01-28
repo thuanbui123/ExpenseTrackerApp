@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/transaction_bloc.dart';
+import 'bloc/transaction_event.dart';
 
 void main() {
-  runApp(BlocProvider(create: (context) => TransactionBloc(), child: const MyApp()));
+  runApp(BlocProvider(create: (context) => TransactionBloc()..add(LoadTransactions()), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
