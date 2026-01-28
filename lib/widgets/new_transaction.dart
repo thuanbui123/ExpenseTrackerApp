@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/transaction_bloc.dart';
 import '../bloc/transaction_event.dart';
+import '../models/transaction.dart';
 
 class NewTransaction extends StatefulWidget {
-  const NewTransaction({super.key});
+  final Transaction? editingTx;
+  const NewTransaction({super.key, this.editingTx});
   @override
   State<NewTransaction> createState() => _NewTransactionState();
 }
@@ -14,15 +16,37 @@ class _NewTransactionState extends State<NewTransaction> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    // Nếu là chế độ sửa, đổ dữ liệu cũ vào form
+    if (widget.editingTx != null) {
+      _titleController.text = widget.editingTx!.title;
+      _amountController.text = widget.editingTx!.amount.toString();
+    }
+  }
+
   void _submitData() {
     final title = _titleController.text;
-    final enteredAmount = double.tryParse(_amountController.text) ?? 0;
+    final amount = double.tryParse(_amountController.text) ?? 0;
 
-    if (title.isEmpty || enteredAmount <= 0) {
+    if (title.isEmpty || amount <= 0) {
       return;
     }
 
-    context.read<TransactionBloc>().add(AddTransaction(title, enteredAmount));
+    if (widget.editingTx == null) {
+      // Thêm mới
+      context.read<TransactionBloc>().add(AddTransaction(title, amount));
+    } else {
+      // Cập nhật
+      final updatedTx = Transaction(
+        id: widget.editingTx!.id,
+        title: title,
+        amount: amount,
+        date: widget.editingTx!.date, // Giữ nguyên ngày cũ hoặc DateTime.now() tùy bạn
+      );
+      context.read<TransactionBloc>().add(UpdateTransaction(updatedTx));
+    }
     Navigator.of(context).pop();
   }
 
