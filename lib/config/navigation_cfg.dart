@@ -13,8 +13,8 @@ class NavigationItem {
 final List<NavigationItem> appNavConfig = [
   NavigationItem(page: const HomeGridView(), title: 'Trang chủ', icon: Icons.home, showFab: true),
   NavigationItem(
-    page: const Center(child: Text('Công việc')),
-    title: 'Công việc',
+    page: const Center(child: Text('Tài khoản')),
+    title: 'Tài khoản',
     icon: Icons.work,
     showFab: false,
   ),

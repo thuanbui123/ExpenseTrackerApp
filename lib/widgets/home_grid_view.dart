@@ -1,3 +1,4 @@
+import 'package:expense_tracker_app/widgets/todo_list.dart';
 import 'package:expense_tracker_app/widgets/transaction_list.dart';
 import 'package:flutter/material.dart';
 
@@ -43,9 +44,7 @@ class HomeGridView extends StatelessWidget {
         title: 'Công việc',
         icon: Icons.checklist_rtl,
         color: Colors.purple,
-        onTap: () {
-          // Chức năng Todo (Project phụ của bạn)
-        },
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TodoList())),
       ),
       MenuItem(
         title: 'Tài khoản/Ví',

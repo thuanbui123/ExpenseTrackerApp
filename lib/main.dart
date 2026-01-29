@@ -3,11 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../config/navigation_cfg.dart';
+import 'bloc/todo_bloc.dart';
+import 'bloc/todo_event.dart';
 import 'bloc/transaction_bloc.dart';
 import 'bloc/transaction_event.dart';
 
 void main() {
-  runApp(BlocProvider(create: (context) => TransactionBloc()..add(LoadTransactions()), child: const MyApp()));
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<TransactionBloc>(create: (context) => TransactionBloc()..add(LoadTransactions())),
+        BlocProvider<TodoBloc>(create: (context) => TodoBloc()..add(LoadTodos())),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

@@ -21,8 +21,8 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
 
     on<AddTransaction>((event, emit) async {
       final newTx = Transaction(title: event.title, amount: event.amount, date: DateTime.now());
-      await DBHelper.insert('user_transactions', newTx.toMap());
-      final dataList = await DBHelper.getData('user_transactions');
+      await DBHelper.insert(DBHelper.tableName, newTx.toMap());
+      final dataList = await DBHelper.getData(DBHelper.tableName);
       final updatedTxs = dataList.map((item) => Transaction.fromMap(item)).toList();
       emit(TransactionState(transactions: updatedTxs));
     });

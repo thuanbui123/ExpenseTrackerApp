@@ -3,15 +3,25 @@ import 'package:sqflite/sqflite.dart' as sql;
 
 class DBHelper {
   static const String tableName = 'user_transactions';
-
+  static const String todoTable = 'user_todos';
   static Future<sql.Database> database() async {
     final dbPath = await sql.getDatabasesPath();
     return sql.openDatabase(
       path.join(dbPath, 'expenses.db'),
-      onCreate: (db, version) {
-        return db.execute('CREATE TABLE $tableName(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, amount REAL, date TEXT)');
+      onCreate: (db, version) async {
+        // Tạo bảng giao dịch
+        await db.execute('CREATE TABLE $tableName(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, amount REAL, date TEXT)');
+        // Tạo bảng công việc (Todo)
+        await db.execute('CREATE TABLE $todoTable(id INTEGER PRIMARY KEY, title TEXT, note TEXT, startAt TEXT, dueDate TEXT, isCompleted INTEGER, priority INTEGER, createdAt TEXT)');
       },
-      version: 1,
+      // Tăng version lên 2 để hệ thống biết cần cập nhật nếu user đã cài bản cũ
+      version: 2,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          // Nếu user đang dùng bản 1, thêm bảng todo vào cho họ
+          await db.execute('CREATE TABLE $todoTable(id TEXT PRIMARY KEY, title TEXT, note TEXT, dueDate TEXT, isCompleted INTEGER, priority INTEGER)');
+        }
+      },
     );
   }
 
