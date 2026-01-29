@@ -39,7 +39,7 @@ class TransactionList extends StatelessWidget {
                         title: Text(txs[index].title, style: const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text(txs[index].date.toString()),
                         trailing: Text(
-                          '${txs[index].amount}đ',
+                          '${txs[index].amount.toInt().toString()}đ',
                           style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                         ),
                       ),

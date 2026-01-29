@@ -1,32 +1,10 @@
-import 'package:expense_tracker_app/widgets/new_transaction.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../config/navigation_cfg.dart';
-import 'bloc/transaction_bloc.dart';
-import 'bloc/transaction_event.dart';
-
-void main() {
-  runApp(BlocProvider(create: (context) => TransactionBloc()..add(LoadTransactions()), child: const MyApp()));
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Quản lý chi tiêu',
-      theme: ThemeData(primarySwatch: Colors.deepPurple, useMaterial3: true),
-      home: const MainScreen(),
-    );
-  }
-}
+import '../widgets/new_transaction.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
-
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
@@ -36,19 +14,20 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Lấy item hiện tại từ config
     final currentItem = appNavConfig[_selectedIndex];
-
     return Scaffold(
       appBar: AppBar(title: Text(currentItem.title), backgroundColor: Theme.of(context).colorScheme.inversePrimary),
       body: IndexedStack(index: _selectedIndex, children: appNavConfig.map((item) => item.page).toList()),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
         selectedItemColor: Colors.deepPurple,
         items: appNavConfig.map((item) => BottomNavigationBarItem(icon: Icon(item.icon), label: item.title)).toList(),
       ),
-      // Chỉ hiện FAB nếu config cho phép
       floatingActionButton: currentItem.showFab ? FloatingActionButton(onPressed: () => _startAddNewTransaction(context), child: const Icon(Icons.add)) : null,
     );
   }
