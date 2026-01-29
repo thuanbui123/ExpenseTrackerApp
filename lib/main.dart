@@ -48,8 +48,6 @@ class _MainScreenState extends State<MainScreen> {
         selectedItemColor: Colors.deepPurple,
         items: appNavConfig.map((item) => BottomNavigationBarItem(icon: Icon(item.icon), label: item.title)).toList(),
       ),
-      // Chỉ hiện FAB nếu config cho phép
-      floatingActionButton: currentItem.showFab ? FloatingActionButton(onPressed: () => _startAddNewTransaction(context), child: const Icon(Icons.add)) : null,
     );
   }
 

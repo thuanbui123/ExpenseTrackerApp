@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../config/navigation_cfg.dart';
-import '../widgets/new_transaction.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -25,19 +24,12 @@ class _MainScreenState extends State<MainScreen> {
             _selectedIndex = index;
           });
         },
-        selectedItemColor: Colors.deepPurple,
+        iconSize: 24,
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: const TextStyle(color: Colors.black54),
+        showUnselectedLabels: true,
         items: appNavConfig.map((item) => BottomNavigationBarItem(icon: Icon(item.icon), label: item.title)).toList(),
       ),
-      floatingActionButton: currentItem.showFab ? FloatingActionButton(onPressed: () => _startAddNewTransaction(context), child: const Icon(Icons.add)) : null,
-    );
-  }
-
-  void _startAddNewTransaction(BuildContext ctx) {
-    showModalBottomSheet(
-      context: ctx,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => const NewTransaction(),
     );
   }
 }

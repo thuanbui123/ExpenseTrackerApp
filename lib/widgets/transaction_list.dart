@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/transaction_event.dart';
+import '../helpers/ui_helper.dart';
 import 'new_transaction.dart';
 
 class TransactionList extends StatelessWidget {
-  // final List<Transaction> transactions;
+  final bool isPage;
 
-  // const TransactionList(this.transactions, {super.key});
-  const TransactionList({super.key});
+  const TransactionList({super.key, this.isPage = false});
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TransactionBloc, TransactionState>(
+    Widget content = BlocBuilder<TransactionBloc, TransactionState>(
       builder: (context, state) {
         final txs = state.transactions;
         if (state.isLoading) {
@@ -49,6 +49,15 @@ class TransactionList extends StatelessWidget {
               );
       },
     );
+    if (isPage) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Lịch sử thu chi')),
+        body: content,
+
+        floatingActionButton: FloatingActionButton(onPressed: () => UIHelper.showNewTransactionSheet(context), child: const Icon(Icons.add)),
+      );
+    }
+    return content;
   }
 
   void _showActionMenu(BuildContext context, Transaction tx) {
